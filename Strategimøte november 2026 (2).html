@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strategimøte november 2026</title>
+<style>
+:root{
+  /* Oppsett: sentrert kolonne, faste faner øverst, dagene som blokker med saker. Hvit, rolig blå, Calibri. */
+  --bg:#ffffff;
+  --surface:#f4f7fa;
+  --ink:#1b2530;
+  --muted:#5a6776;
+  --line:#dbe2ea;
+  --accent:#275a8c;
+  --accent-soft:#e8f0f8;
+  --on-accent:#ffffff;
+  --ok:#2d7a4b;
+  --ok-soft:#e6f2ea;
+  --wait:#8f5d0b;
+  --wait-soft:#fbf0dc;
+  --danger:#ad3a2e;
+  --font: Calibri, Carlito, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --display: Calibri, Carlito, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161c; --surface:#18202a; --ink:#e6ebf0; --muted:#9daab8; --line:#2a3440;
+    --accent:#88b7e6; --accent-soft:#1a2939; --on-accent:#0c1520;
+    --ok:#6fc694; --ok-soft:#173024; --wait:#e2b25e; --wait-soft:#32281a; --danger:#f08a7e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161c; --surface:#18202a; --ink:#e6ebf0; --muted:#9daab8; --line:#2a3440;
+  --accent:#88b7e6; --accent-soft:#1a2939; --on-accent:#0c1520;
+  --ok:#6fc694; --ok-soft:#173024; --wait:#e2b25e; --wait-soft:#32281a; --danger:#f08a7e;
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.45}
+.wrap{max-width:1160px;margin:0 auto;padding-left:20px;padding-right:20px}
+h1,h2,h3,h4{font-family:var(--display);margin:0;line-height:1.2;text-wrap:balance}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.muted{color:var(--muted)}
+.spacer{flex:1}
+
+/* Topp */
+.top{background:var(--bg)}
+.top-inner{display:flex;flex-wrap:wrap;gap:14px 32px;align-items:flex-end;justify-content:space-between;padding-top:24px;padding-bottom:16px}
+h1{font-size:36px;font-weight:700;letter-spacing:-.01em}
+.sub{margin:4px 0 0;color:var(--muted);font-size:19px}
+.status{display:grid;gap:8px;justify-items:end}
+.clock{font-size:17px;color:var(--muted);text-align:right}
+.clock strong{color:var(--ink)}
+.progress{display:flex;align-items:center;gap:10px;font-size:17px;font-variant-numeric:tabular-nums}
+.bar{display:inline-block;width:150px;height:8px;border-radius:99px;background:var(--line);overflow:hidden;vertical-align:middle}
+.bar>i{display:block;height:100%;background:var(--ok);transition:width .3s ease}
+.top-actions{display:flex;gap:8px;align-items:center}
+.menuwrap{position:relative}
+.menu{position:absolute;right:0;top:calc(100% + 6px);z-index:40;background:var(--bg);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.14);padding:6px;display:grid;min-width:230px}
+.menu button{background:none;border:0;text-align:left;padding:9px 12px;border-radius:6px;cursor:pointer;font-size:17px}
+.menu button:hover,.menu button:focus-visible{background:var(--surface)}
+.menu .danger{color:var(--danger)}
+
+/* Faner */
+.sticky{position:sticky;top:0;z-index:30;background:var(--bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-top:6px;padding-bottom:6px}
+.nav::-webkit-scrollbar{display:none}
+.tab{padding:8px 14px;border-radius:8px;text-decoration:none;color:var(--muted);font-weight:700;white-space:nowrap;font-size:18px}
+.tab:hover{background:var(--surface);color:var(--ink)}
+.tab[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+.tab .count{display:inline-block;margin-left:6px;min-width:22px;padding:0 6px;border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:14px;text-align:center;line-height:20px}
+.sync{display:flex;align-items:center;gap:7px;font-size:15px;color:var(--muted);white-space:nowrap;padding-left:12px}
+.sync i{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.sync[data-s="saved"] i{background:var(--ok)}
+.sync[data-s="saving"] i,.sync[data-s="slow"] i{background:var(--wait)}
+.sync[data-s="error"] i{background:var(--danger)}
+
+.nowbar{background:var(--accent);color:var(--on-accent)}
+.nowbar-inner{display:flex;align-items:center;flex-wrap:wrap;gap:6px 16px;padding-top:9px;padding-bottom:9px}
+.now-label{font-weight:700;text-transform:uppercase;font-size:14px;letter-spacing:.08em;opacity:.85}
+.nowbar a{color:inherit;font-weight:700;text-decoration:none;font-size:19px}
+.nowbar a:hover{text-decoration:underline}
+.now-meta{opacity:.88;font-size:17px}
+.nowbar .btn{background:transparent;color:inherit;border-color:color-mix(in srgb, currentColor 45%, transparent)}
+.nowbar .btn:hover{background:color-mix(in srgb, currentColor 14%, transparent);color:inherit;border-color:currentColor}
+
+/* Knapper og felt */
+.btn{border:1px solid var(--line);background:var(--bg);padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:700;white-space:nowrap;font-size:17px;color:var(--ink)}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn[aria-pressed="true"],.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.small{padding:5px 11px;font-size:16px}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--accent)}
+.btn.quiet:hover{background:var(--surface)}
+.btn.danger{color:var(--danger)}
+.btn.danger:hover{border-color:var(--danger)}
+a.btn{text-decoration:none;display:inline-block}
+.linkbtn{background:none;border:0;padding:4px 0;color:var(--accent);cursor:pointer;font-weight:700;font-size:16px;display:inline-flex;gap:6px;align-items:center;text-decoration:none}
+.linkbtn:hover{text-decoration:underline}
+.linkbtn.danger{color:var(--danger)}
+.chev{width:12px;height:12px;transition:transform .15s ease;flex:none}
+[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.cnt{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-size:14px;text-align:center;line-height:20px}
+.in{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--bg);color:var(--ink);font-size:17px;min-width:0}
+textarea.in{resize:vertical;line-height:1.4}
+.in:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+.in:disabled{background:var(--surface);color:var(--muted)}
+select.in{width:auto}
+.lbl-sm{display:block;font-size:15px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.toggle{display:inline-flex;align-items:center;gap:7px;font-size:17px;cursor:pointer;white-space:nowrap}
+.toggle input{width:18px;height:18px;accent-color:var(--accent)}
+
+main{padding-top:26px;padding-bottom:80px}
+.notice{background:var(--accent-soft);border-radius:10px;padding:10px 14px;margin:0 0 20px;font-size:17px}
+
+/* Oversikt */
+.ov-days{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:20px}
+.daycard{border:1px solid var(--line);border-radius:12px;padding:20px 22px 16px}
+.daycard.is-today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.daycard>header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.dtitle{font-size:25px}
+.dprog{font-size:16px;color:var(--muted);font-variant-numeric:tabular-nums}
+.today{display:inline-block;background:var(--accent);color:var(--on-accent);font-size:14px;font-weight:700;padding:1px 9px;border-radius:99px;vertical-align:middle;margin-left:10px;letter-spacing:.02em}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.tl>li{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px}
+.tl .t{font-size:16px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:4px;white-space:nowrap}
+.tl-mark{padding:3px 0}
+.tl-mark .ev{font-weight:700;padding-top:2px}
+.tl-mark.break .ev,.tl-mark.event .ev{color:var(--muted)}
+.tl-block{padding:6px 0 10px}
+.tl-bh{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-weight:700;font-size:18px;border-bottom:1px solid var(--line);padding-bottom:5px}
+.meter{font-size:15px;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mini{list-style:none;margin:4px 0 0;padding:0}
+.mini a{display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px;align-items:start;padding:4px 6px;margin:0 -6px;border-radius:6px;color:var(--ink);text-decoration:none;font-size:17px;line-height:1.3}
+.mini a:hover{background:var(--surface)}
+.mini .dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--muted);margin-top:4px}
+.mini .ml{color:var(--muted);font-size:15px}
+.mini .evt{color:var(--muted);font-style:italic}
+.mini .done a{color:var(--muted)}
+.mini .done .dot{background:var(--ok);border-color:var(--ok)}
+.mini .utsatt .dot{border-color:var(--wait);background:var(--wait-soft)}
+.mini .now a{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.mini .now .dot{border-color:var(--accent);background:var(--accent)}
+.mini .dim{opacity:.32}
+.ov-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px;margin-top:20px}
+.card{border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.card h2{font-size:21px;margin-bottom:10px}
+.card .hint{margin:-4px 0 10px;color:var(--muted);font-size:16px}
+.subh{font-size:16px;color:var(--muted);margin:16px 0 8px}
+.dates{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.dates li{display:grid;grid-template-columns:100px minmax(0,1fr);gap:10px;font-size:17px}
+.dates .d{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.dates a{color:var(--ink);text-decoration-color:var(--line);text-underline-offset:3px}
+.dates a:hover{text-decoration-color:var(--accent)}
+.people{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:5px 13px;cursor:pointer;font-size:17px;color:var(--ink)}
+.chip:hover{border-color:var(--accent)}
+.chip .n{color:var(--muted);margin-left:6px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.chip[aria-pressed="true"] .n{color:inherit;opacity:.8}
+.facts{margin:0;padding-left:20px;display:grid;gap:7px;font-size:17px}
+
+/* Dagvisning */
+.dayhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:16px}
+.dayhead h2{font-size:30px}
+.dayhead p{margin:4px 0 0;color:var(--muted)}
+.dayprog{display:flex;align-items:center;gap:10px;font-size:17px;font-variant-numeric:tabular-nums}
+.filters{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-bottom:22px;padding:12px 14px;background:var(--surface);border-radius:10px}
+.filters input[type="search"]{flex:1 1 240px;width:auto}
+.agenda{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.mark{display:flex;gap:16px;align-items:center;padding:2px 2px}
+.mark .t{min-width:84px;font-variant-numeric:tabular-nums;font-weight:700}
+.mark .ev{font-weight:700}
+.mark .note{color:var(--muted);font-size:17px}
+.mark::after{content:"";flex:1;border-top:1px solid var(--line)}
+.mark.break,.mark.event{color:var(--muted)}
+.block{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.block.session{border-style:dashed}
+.block-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+.block-head h3{font-size:22px}
+.block-head .in{font-weight:700;font-size:19px}
+.saker{list-style:none;margin:0;padding:0}
+.sak{border-top:1px solid var(--line);scroll-margin-top:120px}
+.saker>.sak:first-child{border-top:0}
+.opt-head{padding:8px 20px;border-top:1px solid var(--line);font-size:16px;font-weight:700;color:var(--muted);background:var(--surface)}
+.block-foot{padding:10px 20px;border-top:1px solid var(--line)}
+.sak-row{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:6px 16px;padding:16px 20px;align-items:start}
+.sak.now{background:var(--accent-soft);box-shadow:inset 4px 0 0 var(--accent)}
+.sak.flash{animation:flash 1.8s ease}
+@keyframes flash{0%,30%{background:var(--accent-soft)}100%{background:transparent}}
+.sak-top{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.sak-title{font-size:21px;font-weight:700}
+.sak.done .sak-title,.sak.done .sak-desc,.sak.utsatt .sak-title{color:var(--muted)}
+.pill{font-size:13px;font-weight:700;padding:1px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.pill.now{background:var(--accent);color:var(--on-accent)}
+.pill.wait{background:var(--wait-soft);color:var(--wait)}
+.pill.opt{border:1px dashed var(--muted);color:var(--muted)}
+.sak-meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:5px;font-size:16px}
+.tag{border:1px solid var(--line);border-radius:6px;padding:0 7px;color:var(--muted)}
+.lead .lbl{color:var(--muted)}
+.lead b{font-weight:700}
+.sak-desc{margin:7px 0 0;max-width:72ch}
+.sak-due{margin:6px 0 0;font-size:17px;color:var(--wait);font-weight:700}
+.sak-links{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:6px}
+.sak-tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.check{position:relative;display:block;width:28px;height:28px;margin-top:2px;cursor:pointer}
+.check input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer}
+.check .box{display:block;width:28px;height:28px;border:2px solid var(--muted);border-radius:7px;background:var(--bg);transition:background .15s ease}
+.check input:checked + .box{background:var(--ok);border-color:var(--ok)}
+.check input:checked + .box::after{content:"";position:absolute;left:10px;top:5px;width:8px;height:14px;border:solid var(--bg);border-width:0 3px 3px 0;transform:rotate(45deg)}
+.check input:focus-visible + .box{outline:3px solid var(--accent);outline-offset:2px}
+.check input:disabled{cursor:default}
+.check input:disabled + .box{opacity:.55}
+.sak-panel{margin:0 20px 18px 66px;padding:14px 16px;background:var(--surface);border-radius:10px;display:grid;gap:12px}
+.sak.now .sak-panel{background:var(--bg)}
+.items{display:grid;gap:8px}
+.items:empty{display:none}
+.item{display:grid;grid-template-columns:128px minmax(0,1fr) auto;gap:8px 12px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.item-fields{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.item-fields.oppgave{grid-template-columns:minmax(0,1fr) 150px 130px}
+.item-tools{display:flex;gap:12px;align-items:center;font-size:16px;white-space:nowrap}
+.item.idone [data-ifield="text"]{text-decoration:line-through;color:var(--muted)}
+.itype{justify-self:start;font-size:14px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.itype.oppgave{background:var(--accent-soft);color:var(--accent)}
+.itype.beslutning{background:var(--ok-soft);color:var(--ok)}
+.itype.neste{background:var(--wait-soft);color:var(--wait)}
+.mini-check{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.mini-check input{width:18px;height:18px;accent-color:var(--ok)}
+.add-row{display:flex;flex-wrap:wrap;gap:8px}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.edit-grid .wide{grid-column:1/-1}
+.edit-actions{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.edit-actions .lbl-inline{font-size:16px;color:var(--muted);margin-left:6px}
+.nomatch{color:var(--muted);font-style:italic}
+.deleted{margin-top:24px;padding:14px 18px;border:1px dashed var(--line);border-radius:10px}
+.deleted h3{font-size:18px;margin-bottom:8px}
+.deleted ul{margin:0;padding-left:20px;display:grid;gap:6px}
+
+/* Oppfølging */
+.fu-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;align-items:flex-end;margin-bottom:18px}
+.fu-head h2{font-size:30px}
+.fu-head p{margin:4px 0 0}
+.fu-actions{display:flex;gap:8px;flex-wrap:wrap}
+.fu-stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:17px}
+.stat b{font-size:24px;margin-right:6px;font-variant-numeric:tabular-nums}
+.fu-sec{margin-bottom:32px}
+.fu-sec>h3{font-size:23px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+.tblwrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:17px}
+.tbl th{text-align:left;font-size:15px;color:var(--muted);font-weight:700;padding:6px 10px;border-bottom:1px solid var(--line)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl .c{width:70px;text-align:center}
+.tbl .grp th{color:var(--ink);font-size:17px;padding-top:16px;background:none}
+.tbl tr.idone td:nth-child(2){text-decoration:line-through;color:var(--muted)}
+.tbl a{color:var(--ink)}
+.fu-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.fu-list li{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline;padding:8px 12px;background:var(--surface);border-radius:8px}
+.fu-list .from{font-size:15px;color:var(--muted)}
+.fu-list .from a{color:var(--muted)}
+.chiplist{display:flex;flex-wrap:wrap;gap:8px}
+.chiplist a{border:1px solid var(--line);border-radius:8px;padding:4px 10px;text-decoration:none;color:var(--ink);font-size:16px}
+.chiplist a:hover{border-color:var(--accent)}
+.chiplist .dl{color:var(--muted)}
+.fu-note{padding:12px 0;border-bottom:1px solid var(--line)}
+.fu-note h4{font-size:19px}
+.fu-note h4 a{color:var(--ink)}
+.fu-note p{margin:6px 0 0;white-space:pre-wrap;max-width:80ch}
+.empty{color:var(--muted);font-style:italic;margin:0}
+
+/* Dialog og melding */
+.overlay{position:fixed;inset:0;background:rgba(8,16,24,.5);display:grid;place-items:center;z-index:60;padding:16px}
+.dialog{background:var(--bg);color:var(--ink);border-radius:14px;max-width:580px;width:100%;padding:22px 24px;box-shadow:0 24px 60px rgba(0,0,0,.3);display:grid;gap:14px;max-height:90vh;overflow:auto}
+.dialog h2{font-size:24px}
+.dialog p{margin:0}
+.dialog .row{display:flex;flex-wrap:wrap;gap:8px}
+.dialog .row.end{justify-content:flex-end}
+.dialog .err{color:var(--danger);font-weight:700}
+.dialog hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:10px;display:flex;gap:16px;align-items:center;z-index:70;font-size:17px;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:calc(100vw - 32px)}
+.toast button{background:none;border:0;color:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
+
+@media (max-width:760px){
+  h1{font-size:30px}
+  .status{justify-items:start}
+  .clock{text-align:left}
+  .sak-row{grid-template-columns:30px minmax(0,1fr);padding:14px 14px}
+  .sak-tools{grid-column:2;justify-content:flex-start}
+  .sak-panel{margin:0 14px 14px}
+  .block-head{padding:12px 14px}
+  .opt-head,.block-foot{padding-left:14px;padding-right:14px}
+  .item{grid-template-columns:1fr}
+  .item-fields.oppgave{grid-template-columns:1fr 1fr}
+  .item-fields.oppgave [data-ifield="text"]{grid-column:1/-1}
+  .edit-grid{grid-template-columns:1fr}
+  .sync span{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important;scroll-behavior:auto !important}
+}
+@media print{
+  .sticky,.top-actions,.filters,.sak-tools,.linkbtn,.add-row,.block-foot,.toast,.overlay{display:none !important}
+  body{font-size:12pt}
+  .block,.daycard,.card,.sak{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-inner">
+    <div>
+      <h1>Strategimøte</h1>
+      <p class="sub">Senter for populasjonshelse · 18.–19. november 2026 · Biblioteket i Bygg 1</p>
+    </div>
+    <div class="status">
+      <div class="clock" id="clock"></div>
+      <div class="progress" id="progress"></div>
+      <div class="top-actions">
+        <button type="button" class="btn small" id="editBtn" aria-pressed="false" data-fk="editBtn">Rediger program</button>
+        <div class="menuwrap">
+          <button type="button" class="btn small" id="moreBtn" aria-expanded="false" aria-haspopup="true" aria-controls="moreMenu">Mer</button>
+          <div class="menu" id="moreMenu" role="menu" hidden>
+            <button type="button" role="menuitem" data-menu="backup">Sikkerhetskopi og import</button>
+            <button type="button" role="menuitem" data-menu="reset" class="danger" id="resetItem">Nullstill alt</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="sticky" id="sticky">
+  <nav class="wrap nav" aria-label="Visninger">
+    <a class="tab" href="#oversikt" data-view="oversikt">Oversikt</a>
+    <a class="tab" href="#onsdag" data-view="onsdag">Onsdag 18.</a>
+    <a class="tab" href="#torsdag" data-view="torsdag">Torsdag 19.</a>
+    <a class="tab" href="#oppfolging" data-view="oppfolging">Oppfølging<span class="count" id="fuCount" hidden></span></a>
+    <span class="spacer"></span>
+    <span class="sync" id="sync" data-s="connecting" role="status"><i aria-hidden="true"></i><span id="syncText">Kobler til lagring …</span></span>
+  </nav>
+  <div id="nowbar" class="nowbar" hidden></div>
+</div>
+<main id="main" class="wrap"></main>
+<datalist id="people-list"></datalist>
+<div id="overlay" class="overlay" hidden></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Programmet ---------- */
+const DAYS = [
+  { id:'onsdag', date:'2026-11-18', name:'Onsdag 18. november', short:'Onsdag',
+    sub:'09.00 til ca. 16.00 · Lunsj ca. 11.30 · Felles middag om kvelden',
+    segs:[
+      {k:'mark', t:'09.00', label:'Oppstart'},
+      {k:'block', id:'b1', title:'Blokk 1 · Housekeeping og orienteringer'},
+      {k:'block', id:'b2', title:'Blokk 2 · Prosjektdiskusjoner og faglige forberedelser'},
+      {k:'mark', cls:'break', t:'ca. 11.30', label:'Lunsj'},
+      {k:'block', id:'b2b', title:'Blokk 2 fortsetter'},
+      {k:'mark', t:'ca. 16.00', label:'Avslutning dag 1'},
+      {k:'mark', cls:'event', t:'Kveld', label:'Felles middag', note:'Praktisk informasjon kommer.'}
+    ]},
+  { id:'torsdag', date:'2026-11-19', name:'Torsdag 19. november', short:'Torsdag',
+    sub:'09.00 til ca. 16.00 · Lunsj ca. 11.30 · Felles forskningsmøte på huset',
+    segs:[
+      {k:'mark', t:'09.00', label:'Oppstart'},
+      {k:'block', id:'b3', title:'Blokk 3 · Eiriks ph.d. og øvrige ADHD-arbeider'},
+      {k:'mark', cls:'break', t:'ca. 11.30', label:'Lunsj'},
+      {k:'block', id:'b4', title:'Blokk 4 · Samarbeid, felles arbeidsmåter og planer framover'},
+      {k:'block', id:'fm', kind:'session', title:'Felles forskningsmøte på huset'},
+      {k:'block', id:'b4b', title:'Blokk 4 fortsetter, med Ingvar'},
+      {k:'mark', t:'ca. 16.00', label:'Avslutning'}
+    ]}
+];
+
+const SAKER = [
+  {id:'s01', block:'b1', title:'Oppstart og gjennomgang av programmet', lead:'Arnstein / Gulli', tags:['Oppstart'],
+   desc:'Velkommen til Ingvild. Gå gjennom sakene, avklare prioriteringer og rekkefølge, og justere programmet ved behov.'},
+  {id:'s02', block:'b1', title:'Senterets plass i Helse Bergens forskningsstrategi', lead:'Olav / Arnstein', tags:['Orientering','Diskusjon'],
+   desc:'Hva som kom ut av møtet 23. oktober, hvilke prioriteringer og forventninger som berører oss, og hvordan vi følger opp.'},
+  {id:'s03', block:'b1', title:'Senterets aktivitet 2026', lead:'Gulli', tags:['Orientering','Avklaring'],
+   desc:'Hvordan vi bruker og oppdaterer oversikten. Føring av publiserte og innsendte artikler og manuskripter under arbeid, med tydelig status.'},
+  {id:'s04', block:'b1', title:'NorGI etter arbeidsmøtet 12. november', lead:'Arnstein / Gulli', tags:['Kort orientering'],
+   desc:'Oppsummering av møtet og videre arbeid i prosjektet.'},
+  {id:'s05', block:'b1', title:'NorGI: innsynsbegjæringen', lead:'Arnstein / Gulli', tags:['Kort orientering'],
+   desc:'Status og videre oppfølging.'},
+  {id:'s06', block:'b1', title:'Trygdeforskningsseminaret 2026', lead:'Arnstein', tags:['Kort orientering'],
+   desc:'Oppsummering, erfaringer og eventuell oppfølging.'},
+  {id:'s07', block:'b1', title:'FAFO-artiklene', lead:'Artikkelansvarlige', tags:['Status'],
+   desc:'Hvor artiklene står, og neste steg.'},
+  {id:'s08', block:'b1', title:'Kronikker og innlegg', lead:'Arnstein / Gulli', tags:['Status','Avklaring'],
+   desc:'Hva som er publisert, innsendt eller under arbeid. Videre oppfølging og ansvar.'},
+  {id:'s09', block:'b1', optional:true, title:'Kvalitetssikring av kode og analyser', lead:'Tore', tags:['Forslag'],
+   desc:'Tores forslag til felles minimumskrav for dokumentasjon, kontroll og kvalitetssikring.'},
+  {id:'s10', block:'b1', optional:true, title:'Kort innføring i Elements', lead:'Gulli', tags:['Demo'],
+   desc:'Gulli viser relevant arkiveringspraksis.'},
+  {id:'s11', block:'b2', title:'ADHD i mediene', lead:'Sylwia / Gulli', tags:['Orientering','Diskusjon'],
+   desc:'Status for materiale og koding. Konkrete spørsmål om avgrensning, analyser og neste steg. Kobling til den videre ADHD-satsingen.'},
+  {id:'s12', block:'b2', title:'Ingvilds ph.d.-prosjekt og videre ADHD-satsing', lead:'Arnstein, sammen med Ingvild', tags:['Diskusjon','Avklaring'],
+   desc:'Prioriterte forskningsspørsmål og delstudier før oppstart i januar. Sammenheng med øvrige ADHD-prosjekter, metode- og veiledningsstøtte og brukerinvolvering.'},
+  {id:'s13', block:'b2b', title:'Forberedelser til møtet med Jim van Os 24. november', lead:'Eirik', tags:['Diskusjon','Avklaring'],
+   desc:'Prioritere temaer og spørsmål, avklare hvem som presenterer og hvilket materiale som skal forberedes.',
+   due:'Frist: programmet sendes ut fredag 20. november'},
+  {id:'s14', block:'b2b', title:'Tvang overfor unge', lead:'Tore', tags:['Orientering','Diskusjon'],
+   desc:'Tores forslag etter ECVCP-konferansen om forskning på tvang overfor personer under 18 år, med eksisterende data og gjenbruk av kode fra Lancet-artikkelen. Spørsmål, omfang og videre utvikling.'},
+  {id:'s15', block:'b2b', title:'Øvrige tvangsprosjekter', lead:'Aktuelle prosjektansvarlige', tags:['Status','Diskusjon'],
+   desc:'Pågående arbeider og konkrete spørsmål til gruppen. Eiriks ph.d. og supplementet om tvang-IV tas samlet torsdag.'},
+  {id:'s16', block:'b2b', title:'Medikasjonsprosjektene', lead:'Aktuelle prosjektansvarlige', tags:['Status','Avklaring'],
+   desc:'Pågående analyser og manuskripter, videre arbeid, og spørsmål som må følges opp med Trond, som ikke deltar.'},
+  {id:'s17', block:'b2b', title:'Brukerinvolvering i tvang- og medikasjonsprosjektet', lead:'Arnstein / Eirik (foreslått)', tags:['Orientering','Avklaring'],
+   desc:'Status, behov for videre involvering og hvem som følger opp.'},
+  {id:'s18', block:'b3', title:'Eiriks ph.d.-prosjekt', lead:'Eirik', tags:['Orientering','Diskusjon'],
+   desc:'Samlet status og eventuelle avklaringer. Gjennomgang av supplementet om kovariater og forutsetninger for tvang-IV. Videre arbeid sammen med Ingvar som medveileder.'},
+  {id:'s19', block:'b3', title:'Øvrige ADHD-arbeider', lead:'Aktuelle artikkelansvarlige', tags:['Status','Diskusjon'],
+   desc:'Blant annet ADHD-IV og artikkelen om seponering og manglende etterlevelse av ADHD-medikasjon. Manusstatus, oppfølging av medforfatterinnspill og neste steg.'},
+  {id:'s20', block:'b4', title:'IV-samling med Simen Markussen', lead:'Eirik', tags:['Diskusjon','Beslutning'],
+   desc:'Foreslå datoer i desember, avklare ønsket innhold og hvem som melder tilbake.'},
+  {id:'s21', block:'b4', title:'Mulig samarbeidspartner', lead:'Arnstein (foreslått)', tags:['Diskusjon','Beslutning'],
+   desc:'Lars T. sin videre involvering, aktuell rolle og oppfølging.'},
+  {id:'s22', block:'fm', title:'Fastlegeprosjektet ved FHI', lead:'Arnstein', tags:['Presentasjon'],
+   desc:'Arnstein presenterer fastlegeprosjektet han leder ved FHI.'},
+  {id:'s23', block:'b4b', title:'PRO-DIALOG', lead:'Ingvar', tags:['Kort status'],
+   desc:'Hvor prosjektet står, og om det er noe gruppen bør kjenne til eller følge opp.'},
+  {id:'s24', block:'b4b', title:'Nye FoU-retningslinjer og nytt regelverk', lead:'Arnstein / Gulli', tags:['Kort orientering','Avklaring'],
+   desc:'Hvordan søknadsplaner skal varsles. Relevant informasjon fra infomøtet og hva senteret må følge opp.'},
+  {id:'s25', block:'b4b', title:'Fast KI-del', lead:'Gulli / alle', tags:['Erfaringsdeling'],
+   desc:'Tips, konkrete eksempler og spørsmål fra bruk av KI i arbeidet.'},
+  {id:'s26', block:'b4b', title:'Søknader og utlysninger i 2027', lead:'Arnstein / Gulli', tags:['Diskusjon','Avklaring'],
+   desc:'Prioritere aktuelle søknader og forberedelser. Om vi skal søke posisjoneringsmidler fra Helse Vest, og hva som må meldes til FoU-avdelingen. Ansvar og neste steg.'},
+  {id:'s27', block:'b4b', title:'Avslutning og videre oppfølging', lead:'Alle', tags:['Oppsummering'], special:'followup',
+   desc:'Gå gjennom beslutninger, oppgaver, ansvar og frister. Avklare hva som følges opp i mindre grupper eller på neste strategimøte.'}
+];
+
+const DATES = [
+  {d:'Fre. 20. nov.', text:'Programmet for møtet med Jim van Os sendes ut', sak:'s13'},
+  {d:'Tir. 24. nov.', text:'Møte med Jim van Os', sak:'s13'},
+  {d:'Desember', text:'IV-samling med Simen Markussen. Datoer foreslås på møtet.', sak:'s20'},
+  {d:'Januar', text:'Ingvild starter ph.d.-prosjektet', sak:'s12'}
+];
+
+const FACTS = [
+  'Biblioteket i Bygg 1.',
+  'Begge dager 09.00 til ca. 16.00, lunsj ca. 11.30.',
+  'Onsdag kveld: felles middag. Praktisk informasjon kommer.',
+  'Ingvild ønskes velkommen ved oppstart onsdag.',
+  'Torsdag: felles forskningsmøte på huset, deretter resten av blokk 4 med Ingvar.',
+  'Trond deltar ikke. Spørsmål om medikasjonsprosjektene følges opp med ham.'
+];
+
+const VIEWS = ['oversikt','onsdag','torsdag','oppfolging'];
+const TYPE_LABEL = {oppgave:'Oppgave', beslutning:'Beslutning', neste:'Til neste møte'};
+const ID_RE = /^[A-Za-z0-9_-]{1,40}$/;
+
+const BLOCKS = {}; const BLOCK_ORDER = [];
+DAYS.forEach(d => d.segs.forEach(s => { if (s.k === 'block') { BLOCKS[s.id] = Object.assign({}, s, {day:d.id}); BLOCK_ORDER.push(s.id); } }));
+const BASE = {};
+SAKER.forEach((s, i) => { BASE[s.id] = Object.assign({}, s, {idx:i}); });
+
+/* ---------- Tilstand ---------- */
+let over = {};                       // endringer per sak
+let layout = {order:{}, titles:{}};  // rekkefølge og blokktitler
+let live = {id:null, startedAt:0};   // sak som pågår nå
+const ui = {view:'oversikt', open:new Set(), edit:false, person:'', hideDone:false, q:''};
+let mode = 'pending';                // pending | db | local
+let db = null, dl = null;
+let readOnly = false;
+let focusAfter = null, scrollTarget = null, renderPending = false, pointerDown = false;
+
+const $ = (s, r) => (r || document).querySelector(s);
+const main = $('#main');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const str = v => typeof v === 'string' ? v : '';
+const rid = () => Math.random().toString(36).slice(2, 9);
+const pad = n => String(n).padStart(2, '0');
+const sent = t => { t = t.trim(); return /[.!?]$/.test(t) ? t : t + '.'; };
+
+/* ---------- Saker ---------- */
+function S(id){
+  const b = BASE[id]; const o = over[id];
+  if (!b && !(o && o.added)) return null;
+  const oo = o || {}; const e = oo.edit || {};
+  return {
+    id, base: !!b,
+    title: e.title !== undefined ? e.title : (b ? b.title : ''),
+    desc: e.desc !== undefined ? e.desc : (b ? b.desc || '' : ''),
+    lead: e.lead !== undefined ? e.lead : (b ? b.lead || '' : ''),
+    tags: e.tags !== undefined ? e.tags : (b ? b.tags || [] : []),
+    optional: typeof oo.optional === 'boolean' ? oo.optional : !!(b && b.optional),
+    block: (oo.block && BLOCKS[oo.block]) ? oo.block : (b ? b.block : null),
+    due: b ? b.due || '' : '', special: b ? b.special || '' : '',
+    done: !!oo.done, status: oo.status === 'utsatt' ? 'utsatt' : '',
+    notes: oo.notes || '', items: oo.items || [], deleted: !!oo.deleted
+  };
+}
+function ensure(id){ if (!over[id]) over[id] = {}; return over[id]; }
+function allIds(){ const ids = Object.keys(BASE); for (const id in over) if (!BASE[id] && over[id] && over[id].added) ids.push(id); return ids; }
+function blockIds(bid, withDeleted){
+  const ord = layout.order && Array.isArray(layout.order[bid]) ? layout.order[bid] : null;
+  const rank = id => {
+    const p = ord ? ord.indexOf(id) : -1; if (p >= 0) return p;
+    return 10000 + (BASE[id] ? BASE[id].idx : 1000 + ((over[id] && over[id].createdAt) || 0) / 1e10);
+  };
+  return allIds().filter(id => { const s = S(id); return s && s.block === bid && (withDeleted || !s.deleted); })
+                 .sort((a, b) => rank(a) - rank(b));
+}
+function orderedBlock(bid){ const ids = blockIds(bid); return ids.filter(x => !S(x).optional).concat(ids.filter(x => S(x).optional)); }
+function seqIds(){ return BLOCK_ORDER.flatMap(orderedBlock); }
+function dayIds(day){ return day.segs.filter(s => s.k === 'block').flatMap(s => orderedBlock(s.id)); }
+function blockTitle(bid){ const t = layout.titles && layout.titles[bid]; return (t && t.trim()) ? t : BLOCKS[bid].title; }
+function dayOf(id){ const s = S(id); return s && s.block ? BLOCKS[s.block].day : 'oversikt'; }
+function findItem(id, iid){ const o = over[id]; return o && o.items ? o.items.find(x => x.id === iid) : null; }
+
+/* ---------- Personer ---------- */
+function namesIn(text){
+  return str(text).split(/\/|,|&|\bsammen med\b|\bog\b/i)
+    .map(x => x.replace(/\(.*?\)/g, '').replace(/[–-]?\s*foreslått/gi, '').trim())
+    .filter(n => /^[A-ZÆØÅ][A-Za-zÆØÅæøå]+\.?$/.test(n) && n !== 'Alle' && !/ansvarlige$/i.test(n));
+}
+function peopleOf(s){ const set = new Set(namesIn(s.lead)); s.items.forEach(it => namesIn(it.who).forEach(n => set.add(n))); return [...set]; }
+function peopleIndex(){
+  const m = new Map();
+  for (const id of seqIds()) { const s = S(id); namesIn(s.lead).forEach(n => m.set(n, (m.get(n) || 0) + 1)); s.items.forEach(it => namesIn(it.who).forEach(n => { if (!m.has(n)) m.set(n, 0); })); }
+  return [...m.entries()].map(([name, n]) => ({name, n})).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name, 'nb'));
+}
+function personMatch(s){ if (!ui.person) return true; const p = ui.person.toLowerCase(); return peopleOf(s).some(n => n.toLowerCase() === p); }
+function searchText(s){ return [s.title, s.desc, s.lead, s.tags.join(' '), s.notes, ...s.items.map(i => i.text + ' ' + i.who + ' ' + i.due)].join(' ').toLowerCase(); }
+
+/* ---------- Rensing av lagrede data ---------- */
+function cleanItem(x){ return {id: (typeof x.id === 'string' && ID_RE.test(x.id)) ? x.id : rid(), type: ['oppgave','beslutning','neste'].includes(x.type) ? x.type : 'oppgave', text: str(x.text).slice(0, 2000), who: str(x.who).slice(0, 200), due: str(x.due).slice(0, 200), done: x.done === true}; }
+function cleanSak(d){
+  const o = {}; if (!d || typeof d !== 'object') return o;
+  if (d.done === true) o.done = true;
+  if (d.status === 'utsatt') o.status = 'utsatt';
+  if (typeof d.notes === 'string' && d.notes) o.notes = d.notes.slice(0, 20000);
+  if (Array.isArray(d.items) && d.items.length) o.items = d.items.filter(x => x && typeof x === 'object').slice(0, 200).map(cleanItem);
+  if (d.edit && typeof d.edit === 'object') {
+    const e = {};
+    ['title','desc','lead'].forEach(k => { if (typeof d.edit[k] === 'string') e[k] = d.edit[k].slice(0, 2000); });
+    if (Array.isArray(d.edit.tags)) e.tags = d.edit.tags.filter(t => typeof t === 'string').map(t => t.slice(0, 40)).slice(0, 8);
+    if (Object.keys(e).length) o.edit = e;
+  }
+  if (d.deleted === true) o.deleted = true;
+  if (d.added === true) o.added = true;
+  if (typeof d.block === 'string' && BLOCKS[d.block]) o.block = d.block;
+  if (typeof d.optional === 'boolean') o.optional = d.optional;
+  if (typeof d.createdAt === 'number' && isFinite(d.createdAt)) o.createdAt = d.createdAt;
+  return o;
+}
+function cleanLayout(d){
+  const out = {order:{}, titles:{}};
+  if (d && typeof d === 'object') {
+    if (d.order && typeof d.order === 'object') for (const [k, v] of Object.entries(d.order)) if (BLOCKS[k] && Array.isArray(v)) out.order[k] = v.filter(x => typeof x === 'string' && ID_RE.test(x)).slice(0, 300);
+    if (d.titles && typeof d.titles === 'object') for (const [k, v] of Object.entries(d.titles)) if (BLOCKS[k] && typeof v === 'string') out.titles[k] = v.slice(0, 200);
+  }
+  return out;
+}
+function cleanLive(d){ return (d && typeof d.id === 'string' && ID_RE.test(d.id)) ? {id:d.id, startedAt: (typeof d.startedAt === 'number' && isFinite(d.startedAt)) ? d.startedAt : 0} : {id:null, startedAt:0}; }
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+/* ---------- Lagring ---------- */
+const LOCAL_KEY = 'spop-strategimote-2026-11-data';
+const UI_KEY = 'spop-strategimote-2026-11-ui';
+let readyResolve; const ready = new Promise(r => { readyResolve = r; });
+const W = {};
+let active = 0; const waiters = [];
+async function slot(){ if (active < 4) { active++; return; } await new Promise(r => waiters.push(r)); active++; }
+function release(){ active--; const w = waiters.shift(); if (w) w(); }
+
+function busy(path){ const w = W[path]; return !!(w && (w.inflight || w.dirty)); }
+function busyAny(){ return Object.values(W).some(w => w.inflight || w.dirty); }
+function queueWrite(path, getData, delay){
+  const w = W[path] || (W[path] = {inflight:false, dirty:false, timer:null, tries:0});
+  w.getData = getData; w.dirty = true;
+  clearTimeout(w.timer);
+  w.timer = setTimeout(() => { w.timer = null; flushWrite(path); }, delay || 0);
+  if (mode !== 'local') setSync('saving');
+}
+async function flushWrite(path){
+  const w = W[path]; if (!w || w.inflight || !w.dirty) return;
+  if (w.timer) { clearTimeout(w.timer); w.timer = null; }
+  w.dirty = false; w.inflight = true;
+  let failed = null;
+  try {
+    await ready;
+    if (mode === 'db') {
+      await slot();
+      try { const data = w.getData(); const ref = db.doc(path); if (data === null) await ref.delete(); else await ref.set(data); }
+      finally { release(); }
+    } else if (mode === 'local') { saveLocal(); }
+    w.tries = 0;
+  } catch (e) { failed = e; }
+  w.inflight = false;
+  if (failed) handleWriteError(failed, path, w);
+  if (w.dirty && !w.timer) flushWrite(path);
+  if (!busyAny() && mode === 'db' && !readOnly && syncState !== 'error') setSync('saved');
+}
+function flushAll(){ Object.keys(W).forEach(p => { const w = W[p]; if (w.timer) { clearTimeout(w.timer); w.timer = null; flushWrite(p); } }); }
+function handleWriteError(e, path, w){
+  const code = e && e.code;
+  if ((code === 'unavailable' || code === 'resource_exhausted') && w.tries < 3) {
+    w.tries++; w.dirty = true;
+    w.timer = setTimeout(() => { w.timer = null; flushWrite(path); }, 600 * w.tries + Math.random() * 600);
+    return;
+  }
+  w.tries = 0;
+  if (code === 'invalid_argument' || code === 'revoked' || code === 'not_granted') {
+    setReadOnly(true);
+    toast('Endringen ble ikke lagret. Du har bare lesetilgang til denne siden.');
+  } else if (code === 'quota_exceeded') {
+    setSync('error', 'Lagringen er full');
+    toast('Lagringen er full. Fjern noen notater eller punkter, og prøv igjen.');
+  } else {
+    setSync('error', 'Ikke lagret');
+    toast('Endringen ble ikke lagret. Sjekk nettforbindelsen og prøv igjen.');
+  }
+}
+function saveSak(id, delay){ queueWrite('saker/' + id, () => { const d = cleanSak(over[id]); return Object.keys(d).length ? d : null; }, delay); }
+function saveLayout(delay){ queueWrite('meta/layout', () => { const d = cleanLayout(layout); return (Object.keys(d.order).length || Object.keys(d.titles).length) ? d : null; }, delay); }
+function saveLive(){ queueWrite('meta/live', () => live.id ? {id: live.id, startedAt: live.startedAt} : null); }
+function saveLocal(){ try { localStorage.setItem(LOCAL_KEY, JSON.stringify({saker: over, layout, live})); } catch (e) {} }
+function loadLocal(){
+  try {
+    const j = JSON.parse(localStorage.getItem(LOCAL_KEY) || 'null'); if (!j) return;
+    if (j.saker && typeof j.saker === 'object') for (const [id, v] of Object.entries(j.saker)) if (ID_RE.test(id)) over[id] = cleanSak(v);
+    layout = cleanLayout(j.layout); live = cleanLive(j.live);
+  } catch (e) {}
+}
+function loadUi(){
+  try {
+    const j = JSON.parse(localStorage.getItem(UI_KEY) || '{}');
+    if (typeof j.hideDone === 'boolean') ui.hideDone = j.hideDone;
+    if (typeof j.person === 'string') ui.person = j.person;
+    if (Array.isArray(j.open)) j.open.forEach(x => { if (typeof x === 'string' && ID_RE.test(x)) ui.open.add(x); });
+  } catch (e) {}
+}
+function saveUi(){ try { localStorage.setItem(UI_KEY, JSON.stringify({hideDone: ui.hideDone, person: ui.person, open: [...ui.open]})); } catch (e) {} }
+
+let syncState = 'connecting';
+const SYNC_TEXT = {connecting:'Kobler til lagring …', saving:'Lagrer …', saved:'Lagret for alle', local:'Lagres bare i denne nettleseren', slow:'Får ikke kontakt med lagringen ennå', readonly:'Kun lesetilgang', error:'Ikke lagret'};
+function setSync(s, text){ syncState = s; const el = $('#sync'); el.dataset.s = s; $('#syncText').textContent = text || SYNC_TEXT[s] || ''; }
+
+async function initPersistence(){
+  let api = null;
+  for (let i = 0; i < 15 && !(window.claude && typeof window.claude.use === 'function'); i++) await new Promise(r => setTimeout(r, 100));
+  if (window.claude && typeof window.claude.use === 'function') {
+    try { db = await window.claude.use('db'); } catch (e) { db = null; }
+    try { dl = await window.claude.use('downloads'); } catch (e) { dl = null; }
+    try { api = await window.claude.use('user'); } catch (e) { api = null; }
+  }
+  if (db) {
+    mode = 'db';
+    readyResolve();
+    subscribe();
+    if (api) { try { const c = await api.can('data.write'); if (c === false) setReadOnly(true); } catch (e) {} }
+  } else {
+    mode = 'local';
+    loadLocal();
+    readyResolve();
+    setSync('local');
+  }
+  render();
+}
+
+function subscribe(){
+  let got = false;
+  const timer = setTimeout(() => { if (!got) setSync('slow'); }, 10000);
+  const settle = (meta) => { if (!got && meta && !meta.fromCache) { got = true; clearTimeout(timer); if (!busyAny() && !readOnly) setSync('saved'); } };
+  const fail = (err) => {
+    clearTimeout(timer); got = true;
+    const code = err && err.code;
+    if (code === 'revoked' || code === 'not_granted') { setReadOnly(true); setSync('error', 'Ingen tilgang til lagringen'); }
+    else if (code === 'unavailable') setSync('error', 'Mistet kontakten. Last siden på nytt.');
+    else setSync('error', 'Lagringen svarer ikke');
+  };
+  try {
+    db.collection('saker').onSnapshot(snap => {
+      let changed = false;
+      for (const ch of snap.docChanges()) {
+        const id = ch.doc.id; if (!ID_RE.test(id) || busy('saker/' + id)) continue;
+        if (ch.type === 'removed') { if (over[id]) { delete over[id]; changed = true; } continue; }
+        const d = cleanSak(ch.doc.data());
+        if (!same(d, cleanSak(over[id]))) { over[id] = d; changed = true; }
+      }
+      settle(snap.metadata);
+      if (changed) requestRender();
+    }, fail);
+    db.doc('meta/layout').onSnapshot(snap => {
+      settle(snap.metadata);
+      if (busy('meta/layout')) return;
+      const d = cleanLayout(snap.exists ? snap.data() : null);
+      if (!same(d, cleanLayout(layout))) { layout = d; requestRender(); }
+    }, fail);
+    db.doc('meta/live').onSnapshot(snap => {
+      settle(snap.metadata);
+      if (busy('meta/live')) return;
+      const d = cleanLive(snap.exists ? snap.data() : null);
+      if (!same(d, live)) { live = d; requestRender(); }
+    }, fail);
+  } catch (e) { fail(e); }
+}
+
+function setReadOnly(v){
+  if (readOnly === v) return;
+  readOnly = v;
+  if (v) { ui.edit = false; setSync('readonly'); }
+  render();
+}
+
+/* ---------- Tid ---------- */
+function localDate(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function isToday(day){ return localDate(new Date()) === day.date; }
+function fmtDur(m){ if (m < 60) return m + ' min'; const h = Math.floor(m / 60), r = m % 60; return h + ' t' + (r ? ' ' + r + ' min' : ''); }
+function clockHtml(){
+  const n = new Date(); const ds = localDate(n); const mins = n.getHours() * 60 + n.getMinutes();
+  const kl = 'kl. ' + pad(n.getHours()) + '.' + pad(n.getMinutes());
+  if (ds < '2026-11-18') {
+    const a = new Date(n.getFullYear(), n.getMonth(), n.getDate()); const b = new Date(2026, 10, 18);
+    const days = Math.round((b - a) / 86400000);
+    return '<strong>' + kl + '</strong> · ' + (days === 1 ? 'Starter i morgen kl. 09.00' : 'Starter om ' + days + ' dager');
+  }
+  if (ds === '2026-11-18' || ds === '2026-11-19') {
+    const day = ds === '2026-11-18' ? 'Dag 1' : 'Dag 2'; let rest;
+    if (mins < 540) rest = 'starter om ' + fmtDur(540 - mins);
+    else if (mins < 690) rest = 'lunsj om ca. ' + fmtDur(690 - mins);
+    else if (mins < 960) rest = 'avslutning om ca. ' + fmtDur(960 - mins);
+    else rest = ds === '2026-11-18' ? 'ferdig for i dag, felles middag i kveld' : 'strategimøtet er ferdig';
+    return '<strong>' + kl + '</strong> · ' + day + ', ' + rest;
+  }
+  return '<strong>' + kl + '</strong> · Strategimøtet er ferdig';
+}
+function nowElapsed(){
+  if (!live.startedAt) return '';
+  const st = new Date(live.startedAt); const m = Math.max(0, Math.floor((Date.now() - live.startedAt) / 60000));
+  return 'startet kl. ' + pad(st.getHours()) + '.' + pad(st.getMinutes()) + (m ? ' (' + fmtDur(m) + ')' : ' (nå nettopp)');
+}
+function tick(){ $('#clock').innerHTML = clockHtml(); const t = $('#nowTime'); if (t) t.textContent = nowElapsed(); }
+
+/* ---------- Visning ---------- */
+const CHEV = '<svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function collect(){
+  const c = {total:0, done:0, utsattN:0, besl:[], oppg:[], neste:[], utsatt:[], ikke:[], notes:[]};
+  for (const id of seqIds()) {
+    const s = S(id);
+    if (!s.optional) { c.total++; if (s.done) c.done++; }
+    for (const it of s.items) {
+      if (!it.text.trim()) continue;
+      const x = {s, it};
+      if (it.type === 'beslutning') c.besl.push(x); else if (it.type === 'neste') c.neste.push(x); else c.oppg.push(x);
+    }
+    if (s.status === 'utsatt') c.utsatt.push(s); else if (!s.done && !s.optional) c.ikke.push(s);
+    if (s.notes.trim()) c.notes.push(s);
+  }
+  return c;
+}
+
+function render(){
+  renderPending = false;
+  const ae = document.activeElement;
+  const fk = focusAfter || (ae && ae.dataset ? ae.dataset.fk : null);
+  focusAfter = null;
+  const c = collect();
+  // topp
+  $('#clock').innerHTML = clockHtml();
+  const pct = c.total ? Math.round(c.done / c.total * 100) : 0;
+  $('#progress').innerHTML = '<span>' + c.done + ' av ' + c.total + ' saker behandlet' + (c.utsatt.length ? ', ' + c.utsatt.length + ' utsatt' : '') + '</span><span class="bar" aria-hidden="true"><i style="width:' + pct + '%"></i></span>';
+  const eb = $('#editBtn'); eb.hidden = readOnly; eb.setAttribute('aria-pressed', String(ui.edit)); eb.textContent = ui.edit ? 'Ferdig med redigering' : 'Rediger program';
+  $('#resetItem').hidden = readOnly;
+  document.querySelectorAll('.tab').forEach(a => { if (a.dataset.view === ui.view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  const n = c.besl.length + c.oppg.length + c.neste.length + c.utsatt.length;
+  const fc = $('#fuCount'); fc.hidden = !n; fc.textContent = n;
+  renderNowbar();
+  // personliste til forslag
+  const ppl = peopleIndex().map(p => p.name); ['Trond', 'Alle'].forEach(x => { if (!ppl.includes(x)) ppl.push(x); });
+  $('#people-list').innerHTML = ppl.map(p => '<option value="' + esc(p) + '"></option>').join('');
+  // hovedinnhold
+  let html = noticeHtml();
+  if (ui.view === 'oppfolging') html += viewFollowup(c);
+  else if (ui.view === 'onsdag' || ui.view === 'torsdag') html += viewDay(DAYS.find(d => d.id === ui.view));
+  else html += viewOverview();
+  main.innerHTML = html;
+  if (ui.view === 'onsdag' || ui.view === 'torsdag') applyFilters();
+  main.querySelectorAll('textarea[data-field="notes"]').forEach(autoGrow);
+  if (fk) { const el = document.querySelector('[data-fk="' + CSS.escape(fk) + '"]'); if (el) el.focus({preventScroll:true}); }
+  if (scrollTarget) {
+    const el = document.getElementById(scrollTarget); scrollTarget = null;
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - $('#sticky').offsetHeight - 14;
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({top: y, behavior: reduce ? 'auto' : 'smooth'});
+      el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1900);
+    }
+  }
+}
+
+function noticeHtml(){
+  if (readOnly) return '<p class="notice">Du har lesetilgang. Avkrysninger, notater og endringer kan bare gjøres av dem som har redigeringstilgang til siden.</p>';
+  if (mode === 'local') return '<p class="notice">Endringene lagres bare i denne nettleseren. Bruk <b>Mer → Sikkerhetskopi og import</b> for å ta vare på dem eller flytte dem til en annen maskin.</p>';
+  return '';
+}
+
+function renderNowbar(){
+  const el = $('#nowbar'); const s = live.id ? S(live.id) : null;
+  if (!s || s.deleted) { el.hidden = true; el.innerHTML = ''; return; }
+  el.hidden = false;
+  el.innerHTML = '<div class="wrap nowbar-inner"><span class="now-label">Nå</span><a href="#' + esc(s.id) + '">' + esc(s.title || 'Uten tittel') + '</a>' +
+    (s.lead ? '<span class="now-meta">' + esc(s.lead) + '</span>' : '') + '<span class="now-meta" id="nowTime">' + esc(nowElapsed()) + '</span><span class="spacer"></span>' +
+    (readOnly ? '' : '<button type="button" class="btn small" data-now="next" data-fk="nb-next">Behandlet, neste sak</button><button type="button" class="btn small" data-now="clear" data-fk="nb-clear">Fjern markering</button>') +
+    '</div>';
+}
+
+/* Oversikt */
+function viewOverview(){
+  let h = '<h2 class="sr">Oversikt</h2><div class="ov-days">';
+  for (const d of DAYS) {
+    const ids = dayIds(d); const reg = ids.filter(id => !S(id).optional); const done = reg.filter(id => S(id).done).length;
+    const today = isToday(d);
+    h += '<article class="daycard' + (today ? ' is-today' : '') + '"><header><div><h3 class="dtitle">' + esc(d.name) + (today ? '<span class="today">I dag</span>' : '') + '</h3>' +
+         '<div class="dprog">' + done + ' av ' + reg.length + ' saker behandlet</div></div><a class="btn small" href="#' + d.id + '">Åpne dagen</a></header><ol class="tl">';
+    for (const seg of d.segs) {
+      if (seg.k === 'mark') { h += '<li class="tl-mark ' + (seg.cls || '') + '"><span class="t">' + esc(seg.t) + '</span><span class="ev">' + esc(seg.label) + '</span></li>'; continue; }
+      const bids = orderedBlock(seg.id); const breg = bids.filter(id => !S(id).optional); const bdone = breg.filter(id => S(id).done).length;
+      h += '<li class="tl-block"><span class="t"></span><div><div class="tl-bh"><span>' + esc(blockTitle(seg.id)) + '</span><span class="meter">' + bdone + '/' + breg.length + '</span></div><ul class="mini">' + bids.map(miniHtml).join('') + '</ul></div></li>';
+    }
+    h += '</ol></article>';
+  }
+  h += '</div><div class="ov-cards">' + datesCard() + peopleCard() + factsCard() + '</div>';
+  return h;
+}
+function miniHtml(id){
+  const s = S(id);
+  const cls = [s.done && 'done', s.status === 'utsatt' && 'utsatt', live.id === id && 'now', ui.person && !personMatch(s) && 'dim'].filter(Boolean).join(' ');
+  const state = s.done ? ' (behandlet)' : s.status === 'utsatt' ? ' (utsatt)' : live.id === id ? ' (pågår nå)' : '';
+  return '<li class="' + cls + '"><a href="#' + esc(id) + '"><span class="dot" aria-hidden="true"></span><span>' + (s.optional ? '<span class="evt">Eventuelt: </span>' : '') +
+    esc(s.title || 'Uten tittel') + (s.lead ? ' <span class="ml">· ' + esc(s.lead) + '</span>' : '') + '<span class="sr">' + state + '</span></span></a></li>';
+}
+function datesCard(){
+  const tasks = [];
+  for (const id of seqIds()) { const s = S(id); s.items.forEach(it => { if (it.type === 'oppgave' && it.due.trim() && !it.done && it.text.trim()) tasks.push({s, it}); }); }
+  let h = '<section class="card"><h2>Datoer og frister</h2><ul class="dates">' +
+    DATES.map(d => '<li><span class="d">' + esc(d.d) + '</span><span><a href="#' + d.sak + '">' + esc(d.text) + '</a></span></li>').join('') + '</ul>';
+  if (tasks.length) h += '<h3 class="subh">Fra oppgavene</h3><ul class="dates">' + tasks.map(x => '<li><span class="d">' + esc(x.it.due) + '</span><span><a href="#' + esc(x.s.id) + '">' + esc(x.it.text) + '</a>' + (x.it.who ? ' <span class="muted">(' + esc(x.it.who) + ')</span>' : '') + '</span></li>').join('') + '</ul>';
+  return h + '</section>';
+}
+function peopleCard(){
+  const ppl = peopleIndex();
+  return '<section class="card"><h2>Innledere</h2><p class="hint">Velg en person for å fremheve sakene deres.</p><div class="people">' +
+    ppl.map(p => '<button type="button" class="chip" data-action="person" data-person="' + esc(p.name) + '" aria-pressed="' + (ui.person === p.name) + '" data-fk="pp-' + esc(p.name) + '">' + esc(p.name) + '<span class="n">' + p.n + '</span></button>').join('') +
+    '</div>' + (ui.person ? '<p style="margin:10px 0 0"><button type="button" class="linkbtn" data-action="person" data-person="" data-fk="pp-all">Vis alle</button></p>' : '') + '</section>';
+}
+function factsCard(){ return '<section class="card"><h2>Praktisk</h2><ul class="facts">' + FACTS.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul></section>'; }
+
+/* Dag */
+function viewDay(day){
+  const ids = dayIds(day); const reg = ids.filter(id => !S(id).optional); const done = reg.filter(id => S(id).done).length;
+  const pct = reg.length ? Math.round(done / reg.length * 100) : 0;
+  let h = '<section aria-labelledby="dayh"><div class="dayhead"><div><h2 id="dayh">' + esc(day.name) + (isToday(day) ? '<span class="today">I dag</span>' : '') + '</h2><p>' + esc(day.sub) + '</p></div>' +
+    '<div class="dayprog"><span>' + done + ' av ' + reg.length + ' behandlet</span><span class="bar" aria-hidden="true"><i style="width:' + pct + '%"></i></span></div></div>' +
+    filtersHtml() + '<ol class="agenda">';
+  for (const seg of day.segs) {
+    if (seg.k === 'mark') h += '<li class="mark ' + (seg.cls || '') + '"><span class="t">' + esc(seg.t) + '</span><span class="ev">' + esc(seg.label) + '</span>' + (seg.note ? '<span class="note">' + esc(seg.note) + '</span>' : '') + '</li>';
+    else h += blockHtml(seg.id);
+  }
+  h += '</ol><p class="nomatch" hidden>Ingen saker passer filteret.</p>';
+  if (ui.edit) h += deletedHtml(day);
+  return h + '</section>';
+}
+function filtersHtml(){
+  const ppl = peopleIndex().map(p => p.name); if (ui.person && !ppl.includes(ui.person)) ppl.push(ui.person);
+  return '<div class="filters" role="search"><label class="sr" for="q">Søk</label><input type="search" id="q" class="in" data-filter="q" data-fk="q" placeholder="Søk i saker, notater og oppgaver" value="' + esc(ui.q) + '">' +
+    '<label class="sr" for="pf">Person</label><select id="pf" class="in" data-filter="person" data-fk="pf"><option value="">Alle personer</option>' +
+    ppl.map(p => '<option value="' + esc(p) + '"' + (ui.person === p ? ' selected' : '') + '>' + esc(p) + '</option>').join('') + '</select>' +
+    '<label class="toggle"><input type="checkbox" id="hd" data-filter="hideDone" data-fk="hd"' + (ui.hideDone ? ' checked' : '') + '> Skjul behandlede</label>' +
+    '<span class="spacer"></span><button type="button" class="btn small quiet" data-action="open-all" data-fk="oa">Åpne alle</button><button type="button" class="btn small quiet" data-action="close-all" data-fk="ca">Lukk alle</button></div>';
+}
+function blockHtml(bid){
+  const b = BLOCKS[bid]; const ids = blockIds(bid);
+  const reg = ids.filter(id => !S(id).optional), opt = ids.filter(id => S(id).optional);
+  const done = reg.filter(id => S(id).done).length;
+  const editing = ui.edit && !readOnly;
+  let h = '<li class="block' + (b.kind === 'session' ? ' session' : '') + '" data-block="' + bid + '"><div class="block-head">';
+  h += editing ? '<label class="sr" for="bt-' + bid + '">Tittel på blokken</label><input class="in" id="bt-' + bid + '" data-btitle="' + bid + '" data-fk="bt-' + bid + '" value="' + esc(blockTitle(bid)) + '">'
+               : '<h3>' + esc(blockTitle(bid)) + '</h3>';
+  h += '<span class="meter">' + done + '/' + reg.length + '</span></div>';
+  if (reg.length) h += '<ul class="saker">' + reg.map(sakHtml).join('') + '</ul>';
+  if (opt.length) h += '<div class="opt-head">Eventuelt, hvis tiden tillater</div><ul class="saker opt">' + opt.map(sakHtml).join('') + '</ul>';
+  if (!ids.length) h += '<p class="empty" style="padding:14px 20px">Ingen saker i denne blokken.</p>';
+  if (editing) h += '<div class="block-foot"><button type="button" class="btn small" data-action="add-sak" data-block="' + bid + '" data-fk="add-' + bid + '">+ Ny sak</button></div>';
+  return h + '</li>';
+}
+function sakHtml(id){
+  const s = S(id); const open = ui.open.has(id); const isNow = live.id === id;
+  const cnt = s.items.filter(i => i.text.trim()).length + (s.notes.trim() ? 1 : 0);
+  const cls = ['sak', s.done && 'done', s.status === 'utsatt' && 'utsatt', isNow && 'now'].filter(Boolean).join(' ');
+  const dis = readOnly ? ' disabled' : '';
+  let h = '<li class="' + cls + '" id="' + esc(id) + '" data-id="' + esc(id) + '"><div class="sak-row">' +
+    '<label class="check" title="Merk som behandlet"><input type="checkbox" data-action="done" data-fk="done-' + esc(id) + '"' + (s.done ? ' checked' : '') + dis + ' aria-label="Behandlet: ' + esc(s.title) + '"><span class="box" aria-hidden="true"></span></label><div class="sak-body">';
+  if (ui.edit && !readOnly) h += editFields(s);
+  else {
+    h += '<div class="sak-top"><h4 class="sak-title">' + esc(s.title || 'Uten tittel') + '</h4>' + (isNow ? '<span class="pill now">Pågår nå</span>' : '') + (s.status === 'utsatt' ? '<span class="pill wait">Utsatt</span>' : '') + '</div>';
+    h += '<div class="sak-meta">' + s.tags.map(t => '<span class="tag">' + esc(t) + '</span>').join('') + (s.lead ? '<span class="lead"><span class="lbl">Innleder:</span> <b>' + esc(s.lead) + '</b></span>' : '') + '</div>';
+    if (s.desc) h += '<p class="sak-desc">' + esc(s.desc) + '</p>';
+    if (s.due) h += '<p class="sak-due">' + esc(s.due) + '</p>';
+  }
+  h += '<div class="sak-links"><button type="button" class="linkbtn" data-action="toggle" data-fk="tg-' + esc(id) + '" aria-expanded="' + open + '" aria-controls="p-' + esc(id) + '">' + CHEV + 'Notater og oppfølging' + (cnt ? ' <span class="cnt">' + cnt + '</span>' : '') + '</button>';
+  if (s.special === 'followup') h += '<a class="linkbtn" href="#oppfolging">Åpne oppfølgingssiden</a>';
+  h += '</div></div><div class="sak-tools">';
+  if (!readOnly) {
+    h += '<button type="button" class="btn small" data-action="now" data-fk="now-' + esc(id) + '" aria-pressed="' + isNow + '">' + (isNow ? 'Pågår nå' : 'Sett som nå') + '</button>';
+    h += '<button type="button" class="btn small quiet" data-action="utsett" data-fk="ut-' + esc(id) + '">' + (s.status === 'utsatt' ? 'Angre utsett' : 'Utsett') + '</button>';
+  }
+  h += '</div></div>';
+  if (open) h += panelHtml(s);
+  return h + '</li>';
+}
+function panelHtml(s){
+  const id = esc(s.id); const dis = readOnly ? ' disabled' : '';
+  let h = '<div class="sak-panel" id="p-' + id + '"><div><label class="lbl-sm" for="n-' + id + '">Notater</label><textarea class="in" id="n-' + id + '" data-field="notes" data-fk="n-' + id + '" rows="3" placeholder="Stikkord fra diskusjonen"' + dis + '>' + esc(s.notes) + '</textarea></div>';
+  h += '<div class="items">' + s.items.map(it => itemHtml(s, it)).join('') + '</div>';
+  if (!readOnly) h += '<div class="add-row"><button type="button" class="btn small" data-action="add-item" data-type="oppgave" data-fk="ai-o-' + id + '">+ Oppgave</button><button type="button" class="btn small" data-action="add-item" data-type="beslutning" data-fk="ai-b-' + id + '">+ Beslutning</button><button type="button" class="btn small" data-action="add-item" data-type="neste" data-fk="ai-n-' + id + '">+ Til neste strategimøte</button></div>';
+  return h + '</div>';
+}
+function itemHtml(s, it){
+  const k = esc(s.id + '-' + it.id); const dis = readOnly ? ' disabled' : '';
+  const ph = it.type === 'oppgave' ? 'Hva skal gjøres' : it.type === 'beslutning' ? 'Hva ble bestemt' : 'Hva skal tas opp';
+  let h = '<div class="item ' + it.type + (it.done ? ' idone' : '') + '" data-item="' + esc(it.id) + '"><span class="itype ' + it.type + '">' + TYPE_LABEL[it.type] + '</span><div class="item-fields ' + it.type + '">' +
+    '<label class="sr" for="it-' + k + '">' + TYPE_LABEL[it.type] + '</label><input class="in" id="it-' + k + '" data-ifield="text" data-fk="it-' + k + '" value="' + esc(it.text) + '" placeholder="' + ph + '"' + dis + '>';
+  if (it.type === 'oppgave') h += '<label class="sr" for="iw-' + k + '">Ansvarlig</label><input class="in" id="iw-' + k + '" data-ifield="who" data-fk="iw-' + k + '" list="people-list" value="' + esc(it.who) + '" placeholder="Ansvarlig"' + dis + '>' +
+    '<label class="sr" for="id-' + k + '">Frist</label><input class="in" id="id-' + k + '" data-ifield="due" data-fk="id-' + k + '" value="' + esc(it.due) + '" placeholder="Frist"' + dis + '>';
+  h += '</div><div class="item-tools">';
+  if (it.type === 'oppgave') h += '<label class="mini-check"><input type="checkbox" data-ifield="done" data-fk="ic-' + k + '"' + (it.done ? ' checked' : '') + dis + '> Ferdig</label>';
+  if (!readOnly) h += '<button type="button" class="linkbtn danger" data-action="del-item" data-fk="ix-' + k + '">Fjern</button>';
+  return h + '</div></div>';
+}
+function editFields(s){
+  const id = esc(s.id);
+  const opts = DAYS.map(d => '<optgroup label="' + esc(d.short) + '">' + d.segs.filter(x => x.k === 'block').map(x => '<option value="' + x.id + '"' + (x.id === s.block ? ' selected' : '') + '>' + esc(blockTitle(x.id)) + '</option>').join('') + '</optgroup>').join('');
+  return '<div class="edit-grid">' +
+    '<div class="wide"><label class="lbl-sm" for="et-' + id + '">Tittel</label><input class="in" id="et-' + id + '" data-efield="title" data-fk="etitle-' + id + '" value="' + esc(s.title) + '" placeholder="Tittel på saken"></div>' +
+    '<div><label class="lbl-sm" for="el-' + id + '">Innleder</label><input class="in" id="el-' + id + '" data-efield="lead" data-fk="el-' + id + '" list="people-list" value="' + esc(s.lead) + '"></div>' +
+    '<div><label class="lbl-sm" for="eg-' + id + '">Type, skilt med komma</label><input class="in" id="eg-' + id + '" data-efield="tags" data-fk="eg-' + id + '" value="' + esc(s.tags.join(', ')) + '" placeholder="Orientering, Diskusjon"></div>' +
+    '<div class="wide"><label class="lbl-sm" for="ed-' + id + '">Beskrivelse</label><textarea class="in" id="ed-' + id + '" data-efield="desc" data-fk="ed-' + id + '" rows="2">' + esc(s.desc) + '</textarea></div>' +
+    '<div class="wide edit-actions"><button type="button" class="btn small" data-action="up" data-fk="up-' + id + '">Flytt opp</button><button type="button" class="btn small" data-action="down" data-fk="dn-' + id + '">Flytt ned</button>' +
+    '<label class="lbl-inline" for="mb-' + id + '">Flytt til</label><select class="in" id="mb-' + id + '" data-move="1" data-fk="mb-' + id + '">' + opts + '</select>' +
+    '<label class="toggle"><input type="checkbox" data-efield="optional" data-fk="eo-' + id + '"' + (s.optional ? ' checked' : '') + '> Eventuelt</label>' +
+    '<button type="button" class="btn small danger" data-action="delete" data-fk="del-' + id + '">Slett saken</button></div></div>';
+}
+function deletedHtml(day){
+  const ids = day.segs.filter(s => s.k === 'block').flatMap(s => blockIds(s.id, true)).filter(id => S(id).deleted);
+  if (!ids.length) return '';
+  return '<div class="deleted"><h3>Slettede saker</h3><ul>' + ids.map(id => '<li data-id="' + esc(id) + '">' + esc(S(id).title || 'Uten tittel') + ' <button type="button" class="linkbtn" data-action="restore" data-fk="rs-' + esc(id) + '">Gjenopprett</button></li>').join('') + '</ul></div>';
+}
+function applyFilters(){
+  const q = ui.q.trim().toLowerCase(); const active = !!(q || ui.person || ui.hideDone); let any = false;
+  main.querySelectorAll('.block').forEach(bl => {
+    let vis = 0;
+    bl.querySelectorAll('.sak').forEach(li => {
+      const s = S(li.dataset.id);
+      const show = !!s && (!ui.hideDone || !s.done) && personMatch(s) && (!q || searchText(s).includes(q));
+      li.hidden = !show; if (show) vis++;
+    });
+    const oh = bl.querySelector('.opt-head'); if (oh) oh.hidden = ![...bl.querySelectorAll('.saker.opt .sak')].some(x => !x.hidden);
+    bl.hidden = active && vis === 0 && !ui.edit;
+    if (vis) any = true;
+  });
+  const nm = main.querySelector('.nomatch'); if (nm) nm.hidden = any || !active;
+}
+
+/* Oppfølging */
+function viewFollowup(c){
+  let h = '<section><div class="fu-head"><div><h2>Oppfølging</h2><p class="muted">Beslutninger, oppgaver og notater fra alle sakene, samlet.</p></div><div class="fu-actions">' +
+    '<button type="button" class="btn" data-action="copy-summary" data-fk="cs">Kopier som tekst</button>' + (dl ? '<button type="button" class="btn" data-action="download-summary" data-fk="ds">Last ned (.md)</button>' : '') + '</div></div>';
+  h += '<div class="fu-stats"><span class="stat"><b>' + c.done + '</b>av ' + c.total + ' saker behandlet</span><span class="stat"><b>' + c.besl.length + '</b>' + (c.besl.length === 1 ? 'beslutning' : 'beslutninger') + '</span><span class="stat"><b>' + c.oppg.length + '</b>' + (c.oppg.length === 1 ? 'oppgave' : 'oppgaver') + '</span><span class="stat"><b>' + (c.neste.length + c.utsatt.length) + '</b>til neste strategimøte</span></div>';
+
+  h += '<section class="fu-sec"><h3>Oppgaver</h3>';
+  if (!c.oppg.length) h += '<p class="empty">Ingen oppgaver ennå. Legg dem inn under hver sak med «+ Oppgave».</p>';
+  else {
+    const groups = new Map();
+    c.oppg.forEach(x => { const k = x.it.who.trim() || 'Uten ansvarlig'; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(x); });
+    const keys = [...groups.keys()].sort((a, b) => a === 'Uten ansvarlig' ? 1 : b === 'Uten ansvarlig' ? -1 : a.localeCompare(b, 'nb'));
+    h += '<div class="tblwrap"><table class="tbl"><thead><tr><th class="c">Ferdig</th><th>Oppgave</th><th>Frist</th><th>Sak</th></tr></thead><tbody>';
+    keys.forEach(k => {
+      const arr = groups.get(k);
+      h += '<tr class="grp"><th colspan="4">' + esc(k) + ' <span class="muted">(' + arr.length + ')</span></th></tr>';
+      arr.forEach(x => {
+        const fk = esc(x.s.id + '-' + x.it.id);
+        h += '<tr data-id="' + esc(x.s.id) + '" data-item="' + esc(x.it.id) + '"' + (x.it.done ? ' class="idone"' : '') + '><td class="c"><input type="checkbox" class="mini-check" data-ifield="done" data-fk="fu-' + fk + '" aria-label="Ferdig: ' + esc(x.it.text) + '"' + (x.it.done ? ' checked' : '') + (readOnly ? ' disabled' : '') + '></td><td>' + esc(x.it.text) + '</td><td>' + esc(x.it.due || '–') + '</td><td><a href="#' + esc(x.s.id) + '">' + esc(x.s.title) + '</a></td></tr>';
+      });
+    });
+    h += '</tbody></table></div>';
+  }
+  h += '</section>';
+
+  h += '<section class="fu-sec"><h3>Beslutninger</h3>' + (c.besl.length ? '<ul class="fu-list">' + c.besl.map(x => '<li><span>' + esc(x.it.text) + '</span><span class="from"><a href="#' + esc(x.s.id) + '">' + esc(x.s.title) + '</a></span></li>').join('') + '</ul>' : '<p class="empty">Ingen beslutninger registrert ennå.</p>') + '</section>';
+
+  const neste = c.neste.map(x => '<li><span>' + esc(x.it.text) + '</span><span class="from"><a href="#' + esc(x.s.id) + '">' + esc(x.s.title) + '</a></span></li>')
+    .concat(c.utsatt.map(s => '<li><span>Utsatt sak: <a href="#' + esc(s.id) + '">' + esc(s.title) + '</a></span></li>'));
+  h += '<section class="fu-sec"><h3>Til neste strategimøte</h3>' + (neste.length ? '<ul class="fu-list">' + neste.join('') + '</ul>' : '<p class="empty">Ingenting satt av til neste møte ennå.</p>') + '</section>';
+
+  h += '<section class="fu-sec"><h3>Ikke behandlet</h3>' + (c.ikke.length ? '<div class="chiplist">' + c.ikke.map(s => '<a href="#' + esc(s.id) + '"><span class="dl">' + esc(DAYS.find(d => d.id === BLOCKS[s.block].day).short) + ':</span> ' + esc(s.title) + '</a>').join('') + '</div>' : '<p class="empty">Alle sakene er behandlet eller utsatt.</p>') + '</section>';
+
+  h += '<section class="fu-sec"><h3>Notater</h3>' + (c.notes.length ? c.notes.map(s => '<article class="fu-note"><h4><a href="#' + esc(s.id) + '">' + esc(s.title) + '</a></h4><p>' + esc(s.notes) + '</p></article>').join('') : '<p class="empty">Ingen notater ennå.</p>') + '</section>';
+  return h + '</section>';
+}
+function summaryText(md){
+  const c = collect(); const L = [];
+  const H = t => { L.push(''); L.push(md ? '## ' + t : t); };
+  L.push(md ? '# Strategimøte, Senter for populasjonshelse' : 'Strategimøte, Senter for populasjonshelse');
+  L.push('18.–19. november 2026, Biblioteket i Bygg 1');
+  L.push(''); L.push('Behandlet ' + c.done + ' av ' + c.total + ' saker.');
+  H('Beslutninger');
+  if (!c.besl.length) L.push('Ingen registrert.');
+  c.besl.forEach(x => L.push('- ' + sent(x.it.text) + ' (' + x.s.title + ')'));
+  H('Oppgaver');
+  if (!c.oppg.length) L.push('Ingen registrert.');
+  c.oppg.forEach(x => L.push('- ' + sent(x.it.text) + ' Ansvarlig: ' + (x.it.who.trim() || 'ikke satt') + '. Frist: ' + (x.it.due.trim() || 'ikke satt') + '.' + (x.it.done ? ' Ferdig.' : '') + ' (' + x.s.title + ')'));
+  H('Til neste strategimøte');
+  if (!c.neste.length && !c.utsatt.length) L.push('Ingen registrert.');
+  c.neste.forEach(x => L.push('- ' + sent(x.it.text) + ' (' + x.s.title + ')'));
+  c.utsatt.forEach(s => L.push('- Utsatt sak: ' + s.title));
+  if (c.ikke.length) { H('Ikke behandlet'); c.ikke.forEach(s => L.push('- ' + s.title)); }
+  if (c.notes.length) {
+    H('Notater per sak');
+    c.notes.forEach(s => { L.push(''); L.push(md ? '### ' + s.title : s.title); L.push(s.notes.trim()); });
+  }
+  return L.join('\n') + '\n';
+}
+
+/* ---------- Handlinger ---------- */
+function guard(){ if (readOnly) { toast('Du har bare lesetilgang til denne siden.'); return false; } return true; }
+function snapshotSak(id){ const before = over[id] ? JSON.parse(JSON.stringify(over[id])) : null; return () => { if (before) over[id] = before; else delete over[id]; saveSak(id); render(); }; }
+
+function setDone(id, val){
+  const o = ensure(id); o.done = val; if (val && o.status === 'utsatt') delete o.status;
+  saveSak(id); render();
+}
+function setNow(id){
+  if (live.id === id) live = {id:null, startedAt:0};
+  else live = {id, startedAt: Date.now()};
+  saveLive(); render();
+}
+function nowNext(){
+  const cur = live.id;
+  if (cur && S(cur)) { const o = ensure(cur); o.done = true; delete o.status; saveSak(cur); }
+  const seq = seqIds(); const i = seq.indexOf(cur); let next = null;
+  for (let j = i + 1; j < seq.length; j++) { const s = S(seq[j]); if (!s.done && s.status !== 'utsatt' && !s.optional) { next = s.id; break; } }
+  live = next ? {id: next, startedAt: Date.now()} : {id:null, startedAt:0};
+  saveLive(); render();
+  toast(next ? 'Neste sak: ' + (S(next).title || 'Uten tittel') : 'Det er ingen flere saker igjen.');
+}
+function toggleUtsett(id){
+  const o = ensure(id);
+  if (o.status === 'utsatt') delete o.status; else { o.status = 'utsatt'; o.done = false; if (live.id === id) { live = {id:null, startedAt:0}; saveLive(); } }
+  saveSak(id); render();
+  if (o.status === 'utsatt') toast('Saken er utsatt og ligger under Oppfølging, til neste strategimøte.');
+}
+function addItem(id, type){
+  const o = ensure(id); o.items = o.items || [];
+  const it = {id: rid(), type, text:'', who:'', due:'', done:false}; o.items.push(it);
+  ui.open.add(id); saveUi(); saveSak(id);
+  focusAfter = 'it-' + id + '-' + it.id; render();
+}
+function delItem(id, iid){
+  const undo = snapshotSak(id); const o = ensure(id);
+  o.items = (o.items || []).filter(x => x.id !== iid); saveSak(id); render();
+  toast('Punktet er fjernet.', undo);
+}
+function move(id, dir){
+  const s = S(id); const bid = s.block; const ids = blockIds(bid);
+  const grp = ids.filter(x => S(x).optional === s.optional); const i = grp.indexOf(id); const j = i + dir;
+  if (j < 0 || j >= grp.length) return;
+  [grp[i], grp[j]] = [grp[j], grp[i]];
+  const reg = s.optional ? ids.filter(x => !S(x).optional) : grp; const opt = s.optional ? grp : ids.filter(x => S(x).optional);
+  layout.order = layout.order || {}; layout.order[bid] = reg.concat(opt);
+  saveLayout(); focusAfter = (dir < 0 ? 'up-' : 'dn-') + id; render();
+}
+function moveBlock(id, nb){
+  if (!BLOCKS[nb]) return; const s = S(id); if (s.block === nb) return;
+  const target = blockIds(nb); const o = ensure(id); o.block = nb;
+  layout.order = layout.order || {}; layout.order[nb] = target.concat([id]);
+  saveSak(id); saveLayout(); render();
+  toast('Flyttet til ' + blockTitle(nb) + '.');
+}
+function addSak(bid){
+  const id = 'n' + Date.now().toString(36) + rid().slice(0, 4);
+  over[id] = {added:true, block:bid, createdAt:Date.now(), edit:{title:'', desc:'', lead:'', tags:[]}};
+  if (layout.order && layout.order[bid]) { const ids = blockIds(bid).filter(x => x !== id); layout.order[bid] = ids.filter(x => !S(x).optional).concat([id], ids.filter(x => S(x).optional)); saveLayout(); }
+  saveSak(id); focusAfter = 'etitle-' + id; render();
+}
+function delSak(id){
+  const undo = snapshotSak(id); ensure(id).deleted = true;
+  if (live.id === id) { live = {id:null, startedAt:0}; saveLive(); }
+  saveSak(id); render();
+  toast('Saken er slettet.', undo);
+}
+function restoreSak(id){ const o = ensure(id); delete o.deleted; saveSak(id); render(); }
+
+function exportObj(){ return {app:'strategimote-spop-2026-11', versjon:1, eksportert: new Date().toISOString(), saker: over, layout, live}; }
+function importData(text){
+  let d; try { d = JSON.parse(text); } catch (e) { return 'Teksten er ikke en gyldig sikkerhetskopi.'; }
+  if (!d || typeof d !== 'object' || !d.saker || typeof d.saker !== 'object') return 'Fant ingen saker i sikkerhetskopien.';
+  const old = Object.keys(over); over = {};
+  for (const [id, v] of Object.entries(d.saker)) if (ID_RE.test(id)) { const c = cleanSak(v); if (Object.keys(c).length) over[id] = c; }
+  layout = cleanLayout(d.layout); live = cleanLive(d.live);
+  new Set(old.concat(Object.keys(over))).forEach(id => saveSak(id)); saveLayout(); saveLive();
+  render(); return null;
+}
+function resetAll(){
+  const ids = Object.keys(over); over = {}; layout = {order:{}, titles:{}}; live = {id:null, startedAt:0};
+  ids.forEach(id => saveSak(id)); saveLayout(); saveLive(); render();
+  toast('Alt er nullstilt.');
+}
+
+async function copyText(text, okMsg){
+  try { await navigator.clipboard.writeText(text); toast(okMsg || 'Kopiert.'); }
+  catch (e) {
+    openDialog('<h2 id="dlg-t">Kopier teksten</h2><p>Merk teksten og kopier den med Ctrl+C (Cmd+C på Mac).</p><textarea class="in" rows="12" readonly id="cpy">' + esc(text) + '</textarea><div class="row end"><button type="button" class="btn" data-dlg="close">Lukk</button></div>', () => {});
+    const t = $('#cpy'); if (t) { t.focus(); t.select(); }
+  }
+}
+async function saveFile(filename, data){
+  if (!dl) return;
+  try { await dl.save({filename, data}); }
+  catch (e) { if (!e || e.code !== 'declined') toast('Nedlastingen virket ikke her. Bruk kopiering i stedet.'); }
+}
+
+/* Dialog, meny og meldinger */
+let lastFocus = null;
+function openDialog(html, onAction){
+  const ov = $('#overlay'); lastFocus = document.activeElement;
+  ov.innerHTML = '<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-t">' + html + '</div>';
+  ov.hidden = false;
+  ov.onclick = e => {
+    if (e.target === ov) { closeDialog(); return; }
+    const b = e.target.closest('[data-dlg]'); if (!b) return;
+    if (b.dataset.dlg === 'close') closeDialog(); else onAction(b.dataset.dlg, ov);
+  };
+  const f = ov.querySelector('button, textarea, input'); if (f) f.focus();
+}
+function closeDialog(){ const ov = $('#overlay'); ov.hidden = true; ov.innerHTML = ''; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+function openBackup(){
+  openDialog('<h2 id="dlg-t">Sikkerhetskopi og import</h2><p>Sikkerhetskopien inneholder alt som er krysset av, notert og endret i programmet.</p>' +
+    '<div class="row"><button type="button" class="btn" data-dlg="export-copy">Kopier sikkerhetskopi</button>' + (dl ? '<button type="button" class="btn" data-dlg="export-dl">Last ned (.json)</button>' : '') + '</div>' +
+    (readOnly ? '' : '<hr><div><label class="lbl-sm" for="imp-file">Importer fra fil</label><input type="file" id="imp-file" accept=".json,application/json"></div>' +
+    '<div><label class="lbl-sm" for="imp-text">Eller lim inn en sikkerhetskopi</label><textarea class="in" id="imp-text" rows="4"></textarea></div>' +
+    '<p class="muted">Import erstatter alt som er lagret nå.</p><p class="err" id="imp-err" hidden></p>') +
+    '<div class="row end"><button type="button" class="btn" data-dlg="close">Lukk</button>' + (readOnly ? '' : '<button type="button" class="btn primary" data-dlg="import">Importer</button>') + '</div>',
+    async (act, ov) => {
+      const json = JSON.stringify(exportObj(), null, 2);
+      if (act === 'export-copy') { closeDialog(); copyText(json, 'Sikkerhetskopien er kopiert.'); }
+      else if (act === 'export-dl') saveFile('strategimote-2026-11-sikkerhetskopi.json', json);
+      else if (act === 'import') {
+        const f = $('#imp-file', ov).files[0]; let text = $('#imp-text', ov).value.trim();
+        if (f) { try { text = await f.text(); } catch (e) { text = ''; } }
+        const err = $('#imp-err', ov);
+        if (!text) { err.textContent = 'Velg en fil eller lim inn en sikkerhetskopi først.'; err.hidden = false; return; }
+        const msg = importData(text);
+        if (msg) { err.textContent = msg; err.hidden = false; return; }
+        closeDialog(); toast('Sikkerhetskopien er importert.');
+      }
+    });
+}
+function openReset(){
+  if (!guard()) return;
+  openDialog('<h2 id="dlg-t">Nullstille alt?</h2><p>Alle avkrysninger, notater, oppgaver og endringer i programmet slettes' + (mode === 'db' ? ' for alle som bruker siden' : '') + '. Ta gjerne en sikkerhetskopi først.</p>' +
+    '<div class="row end"><button type="button" class="btn" data-dlg="close">Avbryt</button><button type="button" class="btn danger" data-dlg="reset">Nullstill</button></div>',
+    act => { if (act === 'reset') { closeDialog(); resetAll(); } });
+}
+function closeMenu(){ $('#moreMenu').hidden = true; $('#moreBtn').setAttribute('aria-expanded', 'false'); }
+let toastTimer = null;
+function toast(msg, undo){
+  const t = $('#toast');
+  t.innerHTML = '<span>' + esc(msg) + '</span>' + (undo ? '<button type="button" id="toastUndo">Angre</button>' : '');
+  t.hidden = false; clearTimeout(toastTimer);
+  if (undo) $('#toastUndo').onclick = () => { undo(); t.hidden = true; };
+  toastTimer = setTimeout(() => { t.hidden = true; }, undo ? 8000 : 4000);
+}
+function autoGrow(t){ t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; }
+
+/* Gjengivelse uten å forstyrre skriving */
+function isEditingText(){
+  const a = document.activeElement; if (!a || !main.contains(a)) return false;
+  return a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && !['checkbox','radio','button','file'].includes(a.type));
+}
+function requestRender(){ if (isEditingText() || pointerDown || !$('#overlay').hidden) { renderPending = true; return; } render(); }
+function maybeRenderPending(){ setTimeout(() => { if (renderPending && !isEditingText() && !pointerDown && $('#overlay').hidden) render(); }, 60); }
+document.addEventListener('pointerdown', () => { pointerDown = true; }, true);
+document.addEventListener('pointerup', () => { pointerDown = false; maybeRenderPending(); }, true);
+document.addEventListener('pointercancel', () => { pointerDown = false; maybeRenderPending(); }, true);
+document.addEventListener('focusout', maybeRenderPending);
+
+/* ---------- Hendelser ---------- */
+function route(){
+  const h = decodeURIComponent(location.hash.slice(1)); const prev = ui.view;
+  if (VIEWS.includes(h)) ui.view = h;
+  else if (h && ID_RE.test(h) && S(h) && !S(h).deleted && S(h).block) { ui.view = dayOf(h); ui.open.add(h); saveUi(); scrollTarget = h; }
+  else ui.view = 'oversikt';
+  render();
+  if (!scrollTarget && prev !== ui.view && VIEWS.includes(h)) window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (a && a.getAttribute('href') === location.hash) { e.preventDefault(); route(); }
+  if (!e.target.closest('.menuwrap')) closeMenu();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (!$('#overlay').hidden) closeDialog(); else closeMenu(); } });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushAll(); });
+
+$('#editBtn').addEventListener('click', () => { if (!guard()) return; ui.edit = !ui.edit; if (ui.view === 'oversikt' || ui.view === 'oppfolging') { if (ui.edit) { location.hash = '#onsdag'; return; } } render(); });
+$('#moreBtn').addEventListener('click', () => { const m = $('#moreMenu'); const open = m.hidden; m.hidden = !open; $('#moreBtn').setAttribute('aria-expanded', String(open)); if (open) m.querySelector('button:not([hidden])').focus(); });
+$('#moreMenu').addEventListener('click', e => { const b = e.target.closest('[data-menu]'); if (!b) return; closeMenu(); if (b.dataset.menu === 'backup') openBackup(); else openReset(); });
+$('#nowbar').addEventListener('click', e => {
+  const b = e.target.closest('[data-now]'); if (!b || !guard()) return;
+  if (b.dataset.now === 'next') nowNext(); else { live = {id:null, startedAt:0}; saveLive(); render(); }
+});
+
+main.addEventListener('click', e => {
+  const a = e.target.closest('[data-action]'); if (!a) return;
+  const host = a.closest('[data-id]'); const id = host ? host.dataset.id : null; const act = a.dataset.action;
+  if (act === 'done') return;
+  if (act === 'toggle') { if (ui.open.has(id)) ui.open.delete(id); else ui.open.add(id); saveUi(); render(); return; }
+  if (act === 'person') { const p = a.dataset.person; ui.person = (p && ui.person !== p) ? p : ''; saveUi(); render(); return; }
+  if (act === 'open-all' || act === 'close-all') { const day = DAYS.find(d => d.id === ui.view); if (day) dayIds(day).forEach(x => act === 'open-all' ? ui.open.add(x) : ui.open.delete(x)); saveUi(); render(); return; }
+  if (act === 'copy-summary') { copyText(summaryText(false), 'Oppsummeringen er kopiert.'); return; }
+  if (act === 'download-summary') { saveFile('strategimote-2026-11-oppsummering.md', summaryText(true)); return; }
+  if (!guard()) return;
+  switch (act) {
+    case 'now': setNow(id); break;
+    case 'utsett': toggleUtsett(id); break;
+    case 'add-item': addItem(id, a.dataset.type); break;
+    case 'del-item': delItem(id, a.closest('[data-item]').dataset.item); break;
+    case 'up': move(id, -1); break;
+    case 'down': move(id, 1); break;
+    case 'delete': delSak(id); break;
+    case 'restore': restoreSak(id); break;
+    case 'add-sak': addSak(a.dataset.block); break;
+  }
+});
+main.addEventListener('input', e => {
+  const t = e.target; const host = t.closest('[data-id]'); const id = host ? host.dataset.id : null;
+  if (t.dataset.filter === 'q') { ui.q = t.value; applyFilters(); return; }
+  if (readOnly) return;
+  if (t.dataset.field === 'notes' && id) { ensure(id).notes = t.value; autoGrow(t); saveSak(id, 700); return; }
+  if (t.dataset.ifield && t.type !== 'checkbox' && id) { const it = findItem(id, t.closest('[data-item]').dataset.item); if (it) { it[t.dataset.ifield] = t.value; saveSak(id, 700); } return; }
+  if (t.dataset.efield && t.type !== 'checkbox' && id) {
+    const o = ensure(id); o.edit = o.edit || {}; const k = t.dataset.efield;
+    if (k === 'tags') o.edit.tags = t.value.split(',').map(x => x.trim()).filter(Boolean).slice(0, 8); else o.edit[k] = t.value;
+    saveSak(id, 700); return;
+  }
+  if (t.dataset.btitle) { layout.titles = layout.titles || {}; layout.titles[t.dataset.btitle] = t.value; saveLayout(700); }
+});
+main.addEventListener('change', e => {
+  const t = e.target; const host = t.closest('[data-id]'); const id = host ? host.dataset.id : null;
+  if (t.dataset.filter === 'person') { ui.person = t.value; saveUi(); applyFilters(); return; }
+  if (t.dataset.filter === 'hideDone') { ui.hideDone = t.checked; saveUi(); applyFilters(); return; }
+  if (readOnly) return;
+  if (t.dataset.action === 'done' && id) { setDone(id, t.checked); return; }
+  if (t.dataset.ifield === 'done' && id) { const it = findItem(id, t.closest('[data-item]').dataset.item); if (it) { it.done = t.checked; saveSak(id); render(); } return; }
+  if (t.dataset.efield === 'optional' && id) { ensure(id).optional = t.checked; saveSak(id); render(); return; }
+  if (t.dataset.move && id) { moveBlock(id, t.value); return; }
+  if (t.dataset.field || t.dataset.ifield || t.dataset.efield || t.dataset.btitle) { flushAll(); renderPending = true; maybeRenderPending(); }
+});
+
+/* ---------- Start ---------- */
+loadUi();
+route();
+setInterval(tick, 20000);
+initPersistence();
+})();
+</script>
+</body>
+</html>
